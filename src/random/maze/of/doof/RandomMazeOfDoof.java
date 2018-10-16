@@ -5,7 +5,19 @@
  */
 package random.maze.of.doof;
 
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.text.NumberFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
+import javax.swing.text.NumberFormatter;
 
 /**
  *
@@ -21,18 +33,122 @@ public class RandomMazeOfDoof {
     public static int max = 0;
     public static int cX;
     public static int cY;
+    public static boolean doDraw = false;
     public static ArrayList<ArrayList<Space>> maze = new ArrayList<ArrayList<Space>>();
     public static Stack<Integer> sk = new Stack();
+    public static Object[] ord = {0,1,2,3};
+    public static boolean doLeDo = true;
+    public static boolean[] did = {false,false,false,false};
+    public static Random rnd = new Random(4);
+    public static int size = 4;
+    public static int re = 0;
     
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
-        genMaze(20);
+    public static void shuffle() {
+
+        // Shuffle array
+        for (int i=size; i>1; i--){
+            re = rnd.nextInt(i);
+            swap(ord, i-1, re);
+        }
+
+        
+    }
+    private static void swap(Object[] arr, int i, int j) {
+        Object tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
     }
     
-    public static void genMaze(int size){
+    public static void doPaint(Graphics g){
+        g.setColor(Color.WHITE);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.fillRect(0, 0, 100, 100);
+        if(doDraw){
+            for(ArrayList<Space> line : maze){
+                for(Space space : line){
+                    space.draw(g);
+                }
+            }
+        }
+    }
+    
+    public static JFrame f;
+    public static java.util.Timer timer;
+    public static java.util.Timer timer2 = new java.util.Timer();
+    
+    static class RemindTask extends TimerTask {
+        public void run() {
+            draw.repaint();
+        }
+    }
+    static class mazeTask extends TimerTask {
+        public void run() {
+            if(!checkDirect()){
+                timer2.cancel();
+            }
+        }
+    }
+    
+    public static JPanel draw;
+    
+    public static void main(String[] args) {
+        // TODO code application logic here
+        f = new JFrame("The Random Maze of Doof");
+        draw = new JPanel(){
+            @Override
+            public void paintComponent(Graphics g){
+                g.setColor(Color.WHITE);
+                Graphics2D g2 = (Graphics2D) g;
+                g2.fillRect(0, 0, 10000, 10000);
+                doPaint(g);
+            }
+        };
+        
+        draw.setBounds(0,200,1000,3000);
+        f.getContentPane().add(draw);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JButton b = new JButton("Gen Maze");
+        NumberFormat format = NumberFormat.getInstance();
+        NumberFormatter formatter = new NumberFormatter(format);
+        formatter.setValueClass(Integer.class);
+        formatter.setMinimum(0);
+        formatter.setMaximum(Integer.MAX_VALUE);
+        formatter.setAllowsInvalid(false);
+        formatter.setCommitsOnValidEdit(true);
+        JFormattedTextField tf = new JFormattedTextField(formatter);
+        tf.setBounds(50,50, 150,20);  
+        b.setBounds(50,100,95,30);
+        b.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){  
+                try {  
+                    genMaze(Integer.parseInt(tf.getText().replace(",", "")));
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(RandomMazeOfDoof.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }); 
+        f.add(b);//adding button in JFrame  
+        f.add(tf);
+        f.setPreferredSize(new Dimension(400, 500));
+        f.setSize(new Dimension(400, 500));
+        f.setLayout(null);//using no layout managers  
+        f.setVisible(true);//making the frame visible
+        timer = new java.util.Timer();
+        timer.scheduleAtFixedRate(new RemindTask(), 1, 20);
+    }
+    
+    public static boolean startedBefore = false;
+    
+    public static String genMaze(int size) throws InterruptedException{
+        if(startedBefore){
+            timer2.cancel();
+        }
+        startedBefore = true;
+        doDraw = true;
         max = size;
         maze = new ArrayList<ArrayList<Space>>();
         for(int a = 0; a < size; a++){
@@ -49,16 +165,11 @@ public class RandomMazeOfDoof {
         sk.push(5);
         
         boolean theConsoleHasYelledAtMe = false;
-        while(!theConsoleHasYelledAtMe){
-            try{
-                sk.peek();
-                checkDirect();
-            }
-            catch(EmptyStackException e){
-                theConsoleHasYelledAtMe = true;
-            }
-        }
-        for(ArrayList<Space> line : maze){
+        timer2 = new java.util.Timer();
+        timer2.scheduleAtFixedRate(new mazeTask(), 1, 1);
+        
+        
+        /*for(ArrayList<Space> line : maze){
             for(Space space : line){
                 output += space.pTop();
             }
@@ -71,8 +182,9 @@ public class RandomMazeOfDoof {
                 output += space.pBot();
             }
             output += "\n";
-        }
+        }*/
         System.out.println(output);
+        return output;
     }
     
     public static void p(Object p){
@@ -87,22 +199,38 @@ public class RandomMazeOfDoof {
         maze.set(space.y, temp);
     }
     
-    public static void checkDirect(){
-        boolean doLeDo = true;
-        p(sk);
-        boolean[] did = {false,false,false,false};
-        while(doLeDo && (!did[0] || !did[1] || !did[2] || !did[3])){
-            int dir = (int)(Math.random() * 4);
+    public static void setVisited(){
+        Space space = maze.get(cY).get(cX);
+        space.visited = true;
+        space.hasDot = true;
+        ArrayList<Space> temp = maze.get(space.y);
+        temp.set(space.x, space);
+        maze.set(space.y, temp);
+    }
+    public static void setNot(){
+        Space space = maze.get(cY).get(cX);
+        space.hasDot = false;
+        ArrayList<Space> temp = maze.get(space.y);
+        temp.set(space.x, space);
+        maze.set(space.y, temp);
+    }
+    public static boolean checkDirect(){
+        doLeDo = true;
+        did = new boolean[4];
+        shuffle();
+        for(int i = 0; i < 4 && doLeDo; i++){
+            int dir = (int)ord[i];
             switch(dir){
                 case UP:
                     if(!did[UP] && cY - 1 >= 0){
                         if(!maze.get(cY - 1).get(cX).visited){
                             setWall(UP);
                             cY--;
+                            setVisited();
                             setWall(DOWN);
+                            sk.push(UP);
+                            doLeDo = false;
                         }
-                        sk.push(UP);
-                        doLeDo = false;
                     }
                     did[UP] = true;
                     break;
@@ -111,10 +239,11 @@ public class RandomMazeOfDoof {
                         if(!maze.get(cY + 1).get(cX).visited){
                             setWall(DOWN);
                             cY++;
+                            setVisited();
                             setWall(UP);
+                            sk.push(DOWN);
+                            doLeDo = false;
                         }
-                        sk.push(DOWN);
-                        doLeDo = false;
                     }
                     did[DOWN] = true;
                     break;
@@ -123,10 +252,11 @@ public class RandomMazeOfDoof {
                         if(!maze.get(cY).get(cX - 1).visited){
                             setWall(LEFT);
                             cX--;
+                            setVisited();
                             setWall(RIGHT);
+                            sk.push(LEFT);
+                            doLeDo = false;
                         }
-                        sk.push(LEFT);
-                        doLeDo = false;
                     }
                     did[LEFT] = true;
                     break;
@@ -135,37 +265,41 @@ public class RandomMazeOfDoof {
                         if(!maze.get(cY).get(cX + 1).visited){
                             setWall(RIGHT);
                             cX++;
+                            setVisited();
                             setWall(LEFT);
+                            sk.push(RIGHT);
+                            doLeDo = false;
                         }
-                        sk.push(RIGHT);
-                        doLeDo = false;
                     }
                     did[RIGHT] = true;
                     break;
             }
         }
         if(!did[0] || !did[1] || !did[2] || !did[3]){
-            
+            return true;
         }
         else{
+            setNot();
             int temp = sk.pop();
             switch(temp){
                 case UP:
                     cY++;
-                    break;
+                    return true;
                 case DOWN:
                     cY--;
-                    break;
+                    return true;
                 case LEFT:
                     cX++;
-                    break;
+                    return true;
                 case RIGHT:
                     cX--;
-                    break;
+                    return true;
                 case 5:
-                    break;
+                    //checkDirect();
+                    return false;
             }
         }
+        return false;
     }
     
 }
