@@ -5,6 +5,11 @@
  */
 package random.maze.of.doof;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
+
 /**
  *
  * @author f0809552
@@ -18,6 +23,7 @@ public class Space {
     
     public int x = 0;
     public int y = 0;
+    public boolean hasDot = false;
     public boolean visited = false;
     public boolean[] walls =
     {
@@ -33,14 +39,25 @@ public class Space {
     }
     
     public String pTop(){
-        String temp = "#";
+        String temp = "";
+        if(walls[LEFT] || walls[UP]){
+            temp += "#";
+        }
+        else{
+            temp += " ";
+        }
         if(walls[UP]){
             temp += "#";
         }
         else{
             temp += " ";
         }
-        temp += "#";
+        if(walls[RIGHT] || walls[UP]){
+            temp += "#";
+        }
+        else{
+            temp += " ";
+        }
         return temp;
     }
     
@@ -52,8 +69,13 @@ public class Space {
         else{
             temp += " ";
         }
-        temp += "#";
-        if(walls[LEFT]){
+        if(visited){
+            temp += " ";
+        }
+        else{
+            temp += "#";
+        }
+        if(walls[RIGHT]){
             temp += "#";
         }
         else{
@@ -63,19 +85,62 @@ public class Space {
     }
     
     public String pBot(){
-        String temp = "#";
+        String temp = "";
+        if(walls[LEFT] || walls[DOWN]){
+            temp += "#";
+        }
+        else{
+            temp += " ";
+        }
         if(walls[DOWN]){
             temp += "#";
         }
         else{
             temp += " ";
         }
-        temp += "#";
+        if(walls[RIGHT] || walls[DOWN]){
+            temp += "#";
+        }
+        else{
+            temp += " ";
+        }
         return temp;
     }
     
     public void setWall(int w){
         walls[w] = false;
+    }
+    
+    public void draw(Graphics g){
+        Graphics2D g2 = (Graphics2D) g;
+        if(visited){
+            g.setColor(Color.WHITE);
+        }
+        else{
+            g.setColor(Color.BLACK);
+        }
+        int xa = x * 6;
+        int ya = y * 6;
+        int xb = xa + 6;
+        int yb = ya + 6;
+        g2.fillRect(xa, ya, 6, 6);
+        if(hasDot){
+            g.setColor(Color.RED);
+            g2.fillRect(xa + 2, ya + 2, 3, 3);
+        }
+        g.setColor(Color.BLACK);
+        if(walls[UP]){
+            g2.drawLine(xa, ya, xb, ya);
+        }
+        if(walls[DOWN]){
+            g2.drawLine(xa, yb, xb, yb);
+        }
+        if(walls[LEFT]){
+            g2.drawLine(xa, ya, xa, yb);
+        }
+        if(walls[RIGHT]){
+            g2.drawLine(xb, ya, xb, yb);
+        }
     }
     
     
