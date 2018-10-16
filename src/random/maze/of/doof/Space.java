@@ -32,6 +32,48 @@ public class Space {
         y = yp;
     }
     
+    public String pTop(){
+        String temp = "#";
+        if(walls[UP]){
+            temp += "#";
+        }
+        else{
+            temp += " ";
+        }
+        temp += "#";
+        return temp;
+    }
+    
+    public String pMid(){
+        String temp = "";
+        if(walls[LEFT]){
+            temp += "#";
+        }
+        else{
+            temp += " ";
+        }
+        temp += "#";
+        if(walls[LEFT]){
+            temp += "#";
+        }
+        else{
+            temp += " ";
+        }
+        return temp;
+    }
+    
+    public String pBot(){
+        String temp = "#";
+        if(walls[DOWN]){
+            temp += "#";
+        }
+        else{
+            temp += " ";
+        }
+        temp += "#";
+        return temp;
+    }
+    
     public void setWall(int w){
         walls[w] = false;
     }
