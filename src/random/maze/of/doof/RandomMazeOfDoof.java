@@ -6,6 +6,7 @@
 package random.maze.of.doof;
 
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -65,7 +66,7 @@ public class RandomMazeOfDoof {
     public static void doPaint(Graphics g){
         g.setColor(Color.WHITE);
         Graphics2D g2 = (Graphics2D) g;
-        g2.fillRect(0, 0, 100, 100);
+        g2.fillRect(0, 0, 2000 + max * 2, 2000 + max * 2);
         if(doDraw){
             for(ArrayList<Space> line : maze){
                 for(Space space : line){
@@ -84,10 +85,15 @@ public class RandomMazeOfDoof {
             draw.repaint();
         }
     }
+    
+    public static int RUNS = 10;
+    
     static class mazeTask extends TimerTask {
         public void run() {
-            if(!checkDirect()){
-                timer2.cancel();
+            for(int i = 0; i < RUNS; i++){
+                if(!checkDirect()){
+                    timer2.cancel();
+                }
             }
         }
     }
@@ -102,13 +108,14 @@ public class RandomMazeOfDoof {
             public void paintComponent(Graphics g){
                 g.setColor(Color.WHITE);
                 Graphics2D g2 = (Graphics2D) g;
-                g2.fillRect(0, 0, 10000, 10000);
+                g2.fillRect(0, 0, 2000 + max * 2, 2000 + max * 2);
                 doPaint(g);
             }
         };
         
-        draw.setBounds(0,200,1000,3000);
-        f.getContentPane().add(draw);
+        draw.setBounds(0,0,10000,10000);
+        draw.setPreferredSize(new Dimension(10000,10000));
+        JScrollPane scrollPane = new JScrollPane(draw);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JButton b = new JButton("Gen Maze");
         NumberFormat format = NumberFormat.getInstance();
@@ -130,15 +137,16 @@ public class RandomMazeOfDoof {
                     Logger.getLogger(RandomMazeOfDoof.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        }); 
-        f.add(b);//adding button in JFrame  
-        f.add(tf);
+        });
         f.setPreferredSize(new Dimension(400, 500));
         f.setSize(new Dimension(400, 500));
-        f.setLayout(null);//using no layout managers  
+        f.setLayout(new BorderLayout()); 
+        f.add(tf, BorderLayout.NORTH);
+        f.add(b, BorderLayout.AFTER_LAST_LINE);//adding button in JFrame  
+        f.add(scrollPane, BorderLayout.CENTER);
         f.setVisible(true);//making the frame visible
         timer = new java.util.Timer();
-        timer.scheduleAtFixedRate(new RemindTask(), 1, 20);
+        timer.scheduleAtFixedRate(new RemindTask(), 1, 1);
     }
     
     public static boolean startedBefore = false;
@@ -150,6 +158,7 @@ public class RandomMazeOfDoof {
         startedBefore = true;
         doDraw = true;
         max = size;
+        draw.setPreferredSize(new Dimension(max * 2, max * 2));
         maze = new ArrayList<ArrayList<Space>>();
         for(int a = 0; a < size; a++){
             maze.add(new ArrayList<Space>());
@@ -207,6 +216,13 @@ public class RandomMazeOfDoof {
         temp.set(space.x, space);
         maze.set(space.y, temp);
     }
+    public static void setDot(){
+        Space space = maze.get(cY).get(cX);
+        space.hasDot = true;
+        ArrayList<Space> temp = maze.get(space.y);
+        temp.set(space.x, space);
+        maze.set(space.y, temp);
+    }
     public static void setNot(){
         Space space = maze.get(cY).get(cX);
         space.hasDot = false;
@@ -223,7 +239,7 @@ public class RandomMazeOfDoof {
             switch(dir){
                 case UP:
                     if(!did[UP] && cY - 1 >= 0){
-                        if(!maze.get(cY - 1).get(cX).visited){
+                        if(!maze.get(cY - 1).get(cX).visited && !maze.get(cY - 1).get(cX).hasDot){
                             setWall(UP);
                             cY--;
                             setVisited();
@@ -236,7 +252,7 @@ public class RandomMazeOfDoof {
                     break;
                 case DOWN:
                     if(!did[DOWN] && cY + 1 < max){
-                        if(!maze.get(cY + 1).get(cX).visited){
+                        if(!maze.get(cY + 1).get(cX).visited && !maze.get(cY + 1).get(cX).hasDot){
                             setWall(DOWN);
                             cY++;
                             setVisited();
@@ -249,7 +265,7 @@ public class RandomMazeOfDoof {
                     break;
                 case LEFT:
                     if(!did[LEFT] && cX - 1 >= 0){
-                        if(!maze.get(cY).get(cX - 1).visited){
+                        if(!maze.get(cY).get(cX - 1).visited && !maze.get(cY).get(cX - 1).hasDot){
                             setWall(LEFT);
                             cX--;
                             setVisited();
@@ -262,7 +278,7 @@ public class RandomMazeOfDoof {
                     break;
                 case RIGHT:
                     if(!did[RIGHT] && cX + 1 < max){
-                        if(!maze.get(cY).get(cX + 1).visited){
+                        if(!maze.get(cY).get(cX + 1).visited && !maze.get(cY).get(cX + 1).hasDot){
                             setWall(RIGHT);
                             cX++;
                             setVisited();
