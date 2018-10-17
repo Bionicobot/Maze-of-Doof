@@ -25,6 +25,7 @@ public class Space {
     public int y = 0;
     public boolean hasDot = false;
     public boolean visited = false;
+    
     public boolean[] walls =
     {
         true, // UP
@@ -111,23 +112,24 @@ public class Space {
         walls[w] = false;
     }
     
+    private static final int VA = 2;
+    
     public void draw(Graphics g){
         Graphics2D g2 = (Graphics2D) g;
+        int xa = x * VA;
+        int ya = y * VA;
+        int xb = xa + VA;
+        int yb = ya + VA;
         if(visited){
             g.setColor(Color.WHITE);
         }
         else{
             g.setColor(Color.BLACK);
         }
-        int xa = x * 6;
-        int ya = y * 6;
-        int xb = xa + 6;
-        int yb = ya + 6;
-        g2.fillRect(xa, ya, 6, 6);
         if(hasDot){
             g.setColor(Color.RED);
-            g2.fillRect(xa + 2, ya + 2, 3, 3);
         }
+        g2.fillRect(xa, ya, VA, VA);
         g.setColor(Color.BLACK);
         if(walls[UP]){
             g2.drawLine(xa, ya, xb, ya);
