@@ -12,13 +12,14 @@ public class Space {
     static final int LEFT = 2;
     static final int RIGHT = 3;
     
-    static final int VA = 2;
+    public static int VA = 5;
     
     public int x = 0;
     public int y = 0;
     
     public boolean hasDot = false;
     public boolean visited = false;
+    public boolean isCurrent = false;
     public boolean[] walls =
     {
         true, // UP
@@ -113,9 +114,11 @@ public class Space {
         else{
             g.setColor(Color.BLACK);
         }
-        
         if(hasDot){
             g.setColor(Color.RED);
+        }
+        if(isCurrent){
+            g.setColor(Color.GREEN);
         }
         
         g2.fillRect(xa, ya, VA, VA);
