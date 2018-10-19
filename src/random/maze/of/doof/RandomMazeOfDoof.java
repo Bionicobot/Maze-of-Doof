@@ -43,6 +43,7 @@ public class RandomMazeOfDoof {
     public static Random rnd = new Random(4);
     public static int size = 4;
     public static int re = 0;
+    public static String output = "";
     
     /**
      * @param args the command line arguments
@@ -86,13 +87,29 @@ public class RandomMazeOfDoof {
         }
     }
     
-    public static int RUNS = 10;
+    public static int RUNS = 500;
+    public static int MILL = 1;
     
     static class mazeTask extends TimerTask {
         public void run() {
             for(int i = 0; i < RUNS; i++){
                 if(!checkDirect()){
                     timer2.cancel();
+                    for(ArrayList<Space> line : maze){
+                        for(Space space : line){
+                            output += space.pTop();
+                        }
+                        output += "\n";
+                        for(Space space : line){
+                            output += space.pMid();
+                        }
+                        output += "\n";
+                        for(Space space : line){
+                            output += space.pBot();
+                        }
+                        output += "\n";
+                    }
+                    System.out.println(output);
                 }
             }
         }
@@ -151,7 +168,7 @@ public class RandomMazeOfDoof {
     
     public static boolean startedBefore = false;
     
-    public static String genMaze(int size) throws InterruptedException{
+    public static void genMaze(int size) throws InterruptedException{
         if(startedBefore){
             timer2.cancel();
         }
@@ -168,32 +185,17 @@ public class RandomMazeOfDoof {
         }
         cX = (int)(Math.random() * max);
         cY = (int)(Math.random() * max);
-        maze.get(cY).get(cX).visited = true;
+        setVisited();
         
         String output = "";
         sk.push(5);
         
         boolean theConsoleHasYelledAtMe = false;
         timer2 = new java.util.Timer();
-        timer2.scheduleAtFixedRate(new mazeTask(), 1, 1);
+        timer2.schedule(new mazeTask(), 1, MILL);
         
         
-        /*for(ArrayList<Space> line : maze){
-            for(Space space : line){
-                output += space.pTop();
-            }
-            output += "\n";
-            for(Space space : line){
-                output += space.pMid();
-            }
-            output += "\n";
-            for(Space space : line){
-                output += space.pBot();
-            }
-            output += "\n";
-        }*/
-        System.out.println(output);
-        return output;
+        
     }
     
     public static void p(Object p){
@@ -216,6 +218,7 @@ public class RandomMazeOfDoof {
         temp.set(space.x, space);
         maze.set(space.y, temp);
     }
+    
     public static void setDot(){
         Space space = maze.get(cY).get(cX);
         space.hasDot = true;
@@ -223,6 +226,7 @@ public class RandomMazeOfDoof {
         temp.set(space.x, space);
         maze.set(space.y, temp);
     }
+    
     public static void setNot(){
         Space space = maze.get(cY).get(cX);
         space.hasDot = false;
@@ -230,16 +234,23 @@ public class RandomMazeOfDoof {
         temp.set(space.x, space);
         maze.set(space.y, temp);
     }
+    
+    public static boolean runLoop = true;
+    
     public static boolean checkDirect(){
         doLeDo = true;
         did = new boolean[4];
+        runLoop = true;
         shuffle();
-        for(int i = 0; i < 4 && doLeDo; i++){
-            int dir = (int)ord[i];
+        while(doLeDo && runLoop){
+            if(did[UP] && did[DOWN] && did[LEFT] && did[RIGHT]){
+                runLoop = false;
+            }
+            int dir = (int)(Math.random() * 4);
             switch(dir){
                 case UP:
-                    if(!did[UP] && cY - 1 >= 0){
-                        if(!maze.get(cY - 1).get(cX).visited && !maze.get(cY - 1).get(cX).hasDot){
+                    if(!did[0] && cY - 1 >= 0){
+                        if(!maze.get(cY - 1).get(cX).visited){
                             setWall(UP);
                             cY--;
                             setVisited();
@@ -251,8 +262,8 @@ public class RandomMazeOfDoof {
                     did[UP] = true;
                     break;
                 case DOWN:
-                    if(!did[DOWN] && cY + 1 < max){
-                        if(!maze.get(cY + 1).get(cX).visited && !maze.get(cY + 1).get(cX).hasDot){
+                    if(!did[1] && cY + 1 < max){
+                        if(!maze.get(cY + 1).get(cX).visited){
                             setWall(DOWN);
                             cY++;
                             setVisited();
@@ -264,8 +275,8 @@ public class RandomMazeOfDoof {
                     did[DOWN] = true;
                     break;
                 case LEFT:
-                    if(!did[LEFT] && cX - 1 >= 0){
-                        if(!maze.get(cY).get(cX - 1).visited && !maze.get(cY).get(cX - 1).hasDot){
+                    if(!did[2] && cX - 1 >= 0){
+                        if(!maze.get(cY).get(cX - 1).visited){
                             setWall(LEFT);
                             cX--;
                             setVisited();
@@ -277,8 +288,8 @@ public class RandomMazeOfDoof {
                     did[LEFT] = true;
                     break;
                 case RIGHT:
-                    if(!did[RIGHT] && cX + 1 < max){
-                        if(!maze.get(cY).get(cX + 1).visited && !maze.get(cY).get(cX + 1).hasDot){
+                    if(!did[3] && cX + 1 < max){
+                        if(!maze.get(cY).get(cX + 1).visited){
                             setWall(RIGHT);
                             cX++;
                             setVisited();
@@ -291,31 +302,35 @@ public class RandomMazeOfDoof {
                     break;
             }
         }
-        if(!did[0] || !did[1] || !did[2] || !did[3]){
+        if(runLoop){
             return true;
         }
         else{
             setNot();
-            int temp = sk.pop();
-            switch(temp){
-                case UP:
-                    cY++;
-                    return true;
-                case DOWN:
-                    cY--;
-                    return true;
-                case LEFT:
-                    cX++;
-                    return true;
-                case RIGHT:
-                    cX--;
-                    return true;
-                case 5:
-                    //checkDirect();
-                    return false;
+            if(!sk.empty()){
+                switch(sk.pop()){
+                    case UP:
+                        cY++;
+                        return true;
+                    case DOWN:
+                        cY--;
+                        return true;
+                    case LEFT:
+                        cX++;
+                        return true;
+                    case RIGHT:
+                        cX--;
+                        return true;
+                    case 5:
+                        //checkDirect();
+                        return false;
+                }
+            }
+            else{
+                return false;
             }
         }
-        return false;
+        return true;
     }
     
 }
