@@ -33,6 +33,7 @@ public class RandomMazeOfDoof {
     
     public static JFrame f;
     public static JPanel draw;
+    public static JScrollPane scrollPane;
     
     public static java.util.Timer timer;
     public static java.util.Timer timer2 = new java.util.Timer();
@@ -46,8 +47,9 @@ public class RandomMazeOfDoof {
     
     public static void doPaint(Graphics g){
         g.setColor(Color.WHITE);
+        g.clearRect(0,0, draw.getWidth(),draw.getHeight());
         Graphics2D g2 = (Graphics2D) g;
-        g2.fillRect(0, 0, 2000 + max * 2, 2000 + max * 2);
+        g2.fillRect(0,0, draw.getWidth(),draw.getHeight());
         if(doDraw){
             for(ArrayList<Space> line : maze){
                 for(Space space : line){
@@ -99,15 +101,14 @@ public class RandomMazeOfDoof {
             @Override
             public void paintComponent(Graphics g){
                 g.setColor(Color.WHITE);
-                Graphics2D g2 = (Graphics2D) g;
-                g2.fillRect(0, 0, 2000 + max * 2, 2000 + max * 2);
                 doPaint(g);
             }
         };
         draw.setBounds(0,0,10000,10000);
-        draw.setPreferredSize(new Dimension(10000,10000));
+        draw.setBackground(Color.BLACK);
+        draw.setPreferredSize(new Dimension(100,100));
         
-        JScrollPane scrollPane = new JScrollPane(draw);
+        scrollPane = new JScrollPane(draw);
         
         NumberFormat format = NumberFormat.getInstance();
         NumberFormatter formatter = new NumberFormatter(format);
@@ -138,8 +139,8 @@ public class RandomMazeOfDoof {
         
         f.setLayout(new BorderLayout());
         f.add(tf, BorderLayout.NORTH);
-        f.add(b, BorderLayout.AFTER_LAST_LINE);
         f.add(scrollPane, BorderLayout.CENTER);
+        f.add(b, BorderLayout.PAGE_END);
         
         f.setVisible(true);
         
@@ -156,7 +157,8 @@ public class RandomMazeOfDoof {
         
         max = size;
         
-        draw.setPreferredSize(new Dimension(max * 2, max * 2));
+        draw.setPreferredSize(new Dimension(max * Space.VA, max * Space.VA));
+        scrollPane.setViewportView(draw);
         
         maze = new ArrayList<ArrayList<Space>>();
         for(int a = 0; a < size; a++){
@@ -190,6 +192,12 @@ public class RandomMazeOfDoof {
     public static void setNot(){
         maze.get(cY).get(cX).hasDot = false;
     }
+    public static void setCur(){
+        maze.get(cY).get(cX).isCurrent = true;
+    }
+    public static void notCur(){
+        maze.get(cY).get(cX).isCurrent = false;
+    }
     
     public static boolean checkDirect(){
         doLeDo = true;
@@ -204,11 +212,13 @@ public class RandomMazeOfDoof {
                 case UP:
                     if(!did[0] && cY - 1 >= 0){
                         if(!maze.get(cY - 1).get(cX).visited){
+                            notCur();
                             setWall(UP);
                             cY--;
                             setVisited();
                             setWall(DOWN);
                             sk.push(UP);
+                            setCur();
                             doLeDo = false;
                         }
                     }
@@ -217,11 +227,13 @@ public class RandomMazeOfDoof {
                 case DOWN:
                     if(!did[1] && cY + 1 < max){
                         if(!maze.get(cY + 1).get(cX).visited){
+                            notCur();
                             setWall(DOWN);
                             cY++;
                             setVisited();
                             setWall(UP);
                             sk.push(DOWN);
+                            setCur();
                             doLeDo = false;
                         }
                     }
@@ -230,11 +242,13 @@ public class RandomMazeOfDoof {
                 case LEFT:
                     if(!did[2] && cX - 1 >= 0){
                         if(!maze.get(cY).get(cX - 1).visited){
+                            notCur();
                             setWall(LEFT);
                             cX--;
                             setVisited();
                             setWall(RIGHT);
                             sk.push(LEFT);
+                            setCur();
                             doLeDo = false;
                         }
                     }
@@ -243,11 +257,13 @@ public class RandomMazeOfDoof {
                 case RIGHT:
                     if(!did[3] && cX + 1 < max){
                         if(!maze.get(cY).get(cX + 1).visited){
+                            notCur();
                             setWall(RIGHT);
                             cX++;
                             setVisited();
                             setWall(LEFT);
                             sk.push(RIGHT);
+                            setCur();
                             doLeDo = false;
                         }
                     }
@@ -260,19 +276,24 @@ public class RandomMazeOfDoof {
         }
         else{
             setNot();
+            notCur();
             if(!sk.empty()){
                 switch(sk.pop()){
                     case UP:
                         cY++;
+                        setCur();
                         return true;
                     case DOWN:
                         cY--;
+                        setCur();
                         return true;
                     case LEFT:
                         cX++;
+                        setCur();
                         return true;
                     case RIGHT:
                         cX--;
+                        setCur();
                         return true;
                     case 5:
                         return false;
