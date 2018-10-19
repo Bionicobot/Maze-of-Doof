@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package random.maze.of.doof;
 
 import java.awt.Color;
@@ -10,10 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 
-/**
- *
- * @author f0809552
- */
 public class Space {
     
     static final int UP = 0;
@@ -21,11 +12,13 @@ public class Space {
     static final int LEFT = 2;
     static final int RIGHT = 3;
     
+    static final int VA = 2;
+    
     public int x = 0;
     public int y = 0;
+    
     public boolean hasDot = false;
     public boolean visited = false;
-    
     public boolean[] walls =
     {
         true, // UP
@@ -61,7 +54,6 @@ public class Space {
         }
         return temp;
     }
-    
     public String pMid(){
         String temp = "";
         if(walls[LEFT]){
@@ -84,7 +76,6 @@ public class Space {
         }
         return temp;
     }
-    
     public String pBot(){
         String temp = "";
         if(walls[LEFT] || walls[DOWN]){
@@ -107,30 +98,29 @@ public class Space {
         }
         return temp;
     }
-    
-    public void setWall(int w){
-        walls[w] = false;
-    }
-    
-    private static final int VA = 2;
-    
+
     public void draw(Graphics g){
         Graphics2D g2 = (Graphics2D) g;
+        
         int xa = x * VA;
         int ya = y * VA;
         int xb = xa + VA;
         int yb = ya + VA;
+        
         if(visited){
             g.setColor(Color.WHITE);
         }
         else{
             g.setColor(Color.BLACK);
         }
+        
         if(hasDot){
             g.setColor(Color.RED);
         }
+        
         g2.fillRect(xa, ya, VA, VA);
         g.setColor(Color.BLACK);
+        
         if(walls[UP]){
             g2.drawLine(xa, ya, xb, ya);
         }
