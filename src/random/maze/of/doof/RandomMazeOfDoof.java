@@ -3,16 +3,19 @@ package random.maze.of.doof;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;
+import static random.maze.of.doof.RandomMazeOfDoof.doPaint;
 
 public class RandomMazeOfDoof {
     
@@ -35,6 +38,8 @@ public class RandomMazeOfDoof {
     public static JPanel draw;
     public static JScrollPane scrollPane;
     
+    public static BufferedImage im;
+    
     public static java.util.Timer timer;
     public static java.util.Timer timer2 = new java.util.Timer();
     
@@ -50,21 +55,26 @@ public class RandomMazeOfDoof {
         g.clearRect(0,0, draw.getWidth(),draw.getHeight());
         Graphics2D g2 = (Graphics2D) g;
         g2.fillRect(0,0, draw.getWidth(),draw.getHeight());
+        im = new BufferedImage(max * Space.VA + 1, max * Space.VA + 1, BufferedImage.TYPE_INT_RGB);
+        Graphics img = im.getGraphics();
         if(doDraw){
-            for(ArrayList<Space> line : maze){
-                for(Space space : line){
-                    space.draw(g);
-                }
-            }
+            maze.forEach((line) -> {
+                line.forEach((space) -> {
+                    space.draw(img);
+                });
+            });
         }
+        g2.drawImage(im, 0,0, null);
     }
     
     static class RemindTask extends TimerTask {
+        @Override
         public void run() {
             draw.repaint();
         }
     }
     static class mazeTask extends TimerTask {
+        @Override
         public void run() {
             for(int i = 0; i < RUNS; i++){
                 if(!checkDirect()){
@@ -76,20 +86,30 @@ public class RandomMazeOfDoof {
     
     public static void printDebug(){
         output = "";
-                    for(ArrayList<Space> line : maze){
-                        for(Space space : line){
-                            output += space.pTop();
-                        }
-                        output += "\n";
-                        for(Space space : line){
-                            output += space.pMid();
-                        }
-                        output += "\n";
-                        for(Space space : line){
-                            output += space.pBot();
-                        }
-                        output += "\n";
-                    }
+        maze.stream().map((line) -> {
+            line.forEach((space) -> {
+                output += space.pTop();
+            });
+            return line;
+        }).map((line) -> {
+            output += "\n";
+            return line;
+        }).map((line) -> {
+            line.forEach((space) -> {
+                output += space.pMid();
+            });
+            return line;
+        }).map((line) -> {
+            output += "\n";
+            return line;
+        }).map((line) -> {
+            line.forEach((space) -> {
+                output += space.pBot();
+            });
+            return line;
+        }).forEachOrdered((_item) -> {
+            output += "\n";
+        });
                     System.out.println(output);
     }
     
@@ -97,12 +117,7 @@ public class RandomMazeOfDoof {
         f = new JFrame("The Random Maze of Doof");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        draw = new JPanel(){
-            @Override
-            public void paintComponent(Graphics g){
-                g.setColor(Color.WHITE);
-                doPaint(g);
-            }
+        draw = new InputPanel(){
         };
         draw.setBounds(0,0,10000,10000);
         draw.setBackground(Color.BLACK);
@@ -123,14 +138,11 @@ public class RandomMazeOfDoof {
         
         JButton b = new JButton("Gen Maze");
         b.setBounds(50,100,95,30);
-        b.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){  
-                try {  
-                    genMaze(Integer.parseInt(tf.getText().replace(",", "")));
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(RandomMazeOfDoof.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        b.addActionListener((ActionEvent e) -> {
+            try {
+                genMaze(Integer.parseInt(tf.getText().replace(",", "")));
+            } catch (InterruptedException ex) {
+                Logger.getLogger(RandomMazeOfDoof.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
         
@@ -160,9 +172,9 @@ public class RandomMazeOfDoof {
         draw.setPreferredSize(new Dimension(max * Space.VA, max * Space.VA));
         scrollPane.setViewportView(draw);
         
-        maze = new ArrayList<ArrayList<Space>>();
+        maze = new ArrayList<>();
         for(int a = 0; a < size; a++){
-            maze.add(new ArrayList<Space>());
+            maze.add(new ArrayList<>());
             for(int b = 0; b < max; b++){
                 maze.get(a).add(new Space(b,a));
             }
@@ -296,6 +308,7 @@ public class RandomMazeOfDoof {
                         setCur();
                         return true;
                     case 5:
+                        setCur();
                         return false;
                 }
             }
@@ -307,3 +320,25 @@ public class RandomMazeOfDoof {
     }
     
 }
+
+class InputPanel extends JPanel implements KeyListener{
+    @Override
+    public void keyTyped(KeyEvent e) {
+        System.out.println("keyTyped: "+e);
+    }
+    @Override
+    public void keyPressed(KeyEvent e) {
+        System.out.println("keyPressed: "+e);
+    }
+    @Override
+    public void keyReleased(KeyEvent e) {
+        System.out.println("keyReleased: "+e);
+    }
+    @Override
+    public void paintComponent(Graphics g){
+        g.setColor(Color.WHITE);
+        doPaint(g);
+    }
+}
+
+
