@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;
 import static random.maze.of.doof.RandomMazeOfDoof.doPaint;
+import static random.maze.of.doof.RandomMazeOfDoof.handleInput;
 
 public class RandomMazeOfDoof {
     
@@ -318,20 +319,24 @@ public class RandomMazeOfDoof {
         return true;
     }
     
+    public static void handleInput(KeyEvent e, boolean pressed){
+        
+    }
+    
 }
 
 class InputPanel extends JPanel implements KeyListener{
     @Override
     public void keyTyped(KeyEvent e) {
-        System.out.println("keyTyped: "+e);
     }
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("keyPressed: "+e);
+        handleInput(e, true);
+        
     }
     @Override
     public void keyReleased(KeyEvent e) {
-        System.out.println("keyReleased: "+e);
+        handleInput(e, false);
     }
     @Override
     public void paintComponent(Graphics g){
