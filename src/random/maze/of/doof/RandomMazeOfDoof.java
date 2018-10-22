@@ -117,8 +117,7 @@ public class RandomMazeOfDoof {
         f = new JFrame("The Random Maze of Doof");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        draw = new InputPanel(){
-        };
+        draw = new InputPanel();
         draw.setBounds(0,0,10000,10000);
         draw.setBackground(Color.BLACK);
         draw.setPreferredSize(new Dimension(100,100));
