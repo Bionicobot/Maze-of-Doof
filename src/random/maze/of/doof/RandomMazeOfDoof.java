@@ -320,7 +320,12 @@ public class RandomMazeOfDoof {
     }
     
     public static void handleInput(KeyEvent e, boolean pressed){
-        
+        if(pressed){
+            
+        }
+        else{
+            
+        }
     }
     
 }
