@@ -11,7 +11,7 @@ public class Space {
     static final int LEFT = 2;
     static final int RIGHT = 3;
     
-    public static int VA = 5;
+    public static int VA = 16;
     
     public int x = 0;
     public int y = 0;
