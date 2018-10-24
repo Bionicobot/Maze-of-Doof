@@ -41,6 +41,8 @@ public class RandomMazeOfDoof {
     
     public static BufferedImage im;
     
+    public static int facing = 0;
+    
     public static java.util.Timer timer;
     public static java.util.Timer timer2 = new java.util.Timer();
     
@@ -50,6 +52,7 @@ public class RandomMazeOfDoof {
     public static int MILL = 1;
     
     public static boolean startedBefore = false;
+    public static boolean mazeDone = false;
     
     public static void doPaint(Graphics g){
         g.setColor(Color.WHITE);
@@ -80,6 +83,8 @@ public class RandomMazeOfDoof {
             for(int i = 0; i < RUNS; i++){
                 if(!checkDirect()){
                     timer2.cancel();
+                    mazeDone = true;
+                    p("Done");
                 }
             }
         }
@@ -113,6 +118,7 @@ public class RandomMazeOfDoof {
         });
                     System.out.println(output);
     }
+    public static void p(Object b){System.out.println(b);}
     
     public static void main(String[] args) {
         f = new JFrame("The Random Maze of Doof");
@@ -122,6 +128,9 @@ public class RandomMazeOfDoof {
         draw.setBounds(0,0,10000,10000);
         draw.setBackground(Color.BLACK);
         draw.setPreferredSize(new Dimension(100,100));
+        
+        draw.setFocusable(true);
+        draw.requestFocusInWindow();
         
         scrollPane = new JScrollPane(draw);
         
@@ -161,6 +170,10 @@ public class RandomMazeOfDoof {
     }
     
     public static void genMaze(int size) throws InterruptedException{
+        draw.setFocusable(true);
+        draw.requestFocusInWindow();
+        
+        mazeDone = false;
         if(startedBefore){
             timer2.cancel();
         }
@@ -319,12 +332,122 @@ public class RandomMazeOfDoof {
         return true;
     }
     
+    public static boolean shiftHeld = false;
+    public static boolean[] heldDir = {false, false, false, false};
+    
     public static void handleInput(KeyEvent e, boolean pressed){
-        if(pressed){
-            
-        }
-        else{
-            
+        if(mazeDone){
+            if(pressed){
+                switch(e.getKeyCode()){
+                    case KeyEvent.VK_SHIFT:
+                        shiftHeld = true;
+                        break;
+                        
+                    case KeyEvent.VK_UP:
+                        facing = UP;
+                        if(cY - 1 >= 0 && !maze.get(cY).get(cX).walls[UP] && !(shiftHeld)){
+                            notCur();
+                            cY--;
+                            setCur();
+                        }
+                        else if(shiftHeld && cY - 1 >= 0 && !maze.get(cY).get(cX).walls[UP]){
+                            maze.get(cY - 1).get(cX).hasDot = true;
+                        }
+                        break;
+                    case KeyEvent.VK_DOWN:
+                        facing = DOWN;
+                        if(cY + 1 < max && !maze.get(cY).get(cX).walls[DOWN] && !(shiftHeld)){
+                            notCur();
+                            cY++;
+                            setCur();
+                        }
+                        else if(shiftHeld && cY + 1 >= 0 && !maze.get(cY).get(cX).walls[DOWN]){
+                            maze.get(cY + 1).get(cX).hasDot = true;
+                        }
+                        break;
+                    case KeyEvent.VK_LEFT:
+                        facing = LEFT;
+                        if(cX - 1 >= 0 && !maze.get(cY).get(cX).walls[LEFT] && !(shiftHeld)){
+                            notCur();
+                            cX--;
+                            setCur();
+                        }
+                        else if(shiftHeld && cX - 1 >= 0 && !maze.get(cY).get(cX).walls[LEFT]){
+                            maze.get(cY).get(cX - 1).hasDot = true;
+                        }
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        facing = RIGHT;
+                        if(cX + 1 < max && !maze.get(cY).get(cX).walls[RIGHT] && !(shiftHeld)){
+                            notCur();
+                            cX++;
+                            setCur();
+                        }
+                        else if(shiftHeld && cX + 1 >= 0 && !maze.get(cY).get(cX).walls[RIGHT]){
+                            maze.get(cY).get(cX + 1).hasDot = true;
+                        }
+                        break;
+                }
+            }
+            else{
+                switch(e.getKeyCode()){
+                    case KeyEvent.VK_SHIFT:
+                        shiftHeld = false;
+                        switch(facing){
+                        
+                    case UP:
+                        facing = 5;
+                        if(cY - 1 >= 0){
+                            maze.get(cY - 1).get(cX).hasDot = false;
+                        }
+                        break;
+                    case DOWN:
+                        facing = 5;
+                        if(cY + 1 < max){
+                            maze.get(cY + 1).get(cX).hasDot = false;
+                        }
+                        break;
+                    case LEFT:
+                        facing = 5;
+                        if(cX - 1 >= 0){
+                            maze.get(cY).get(cX - 1).hasDot = false;
+                        }
+                        break;
+                    case RIGHT:
+                        facing = 5;
+                        if(cX + 1 < max){
+                            maze.get(cY).get(cX + 1).hasDot = false;
+                        }
+                        break;
+                        }
+                        break;
+                        
+                    case KeyEvent.VK_UP:
+                        facing = 5;
+                        if(cY - 1 >= 0){
+                            maze.get(cY - 1).get(cX).hasDot = false;
+                        }
+                        break;
+                    case KeyEvent.VK_DOWN:
+                        facing = 5;
+                        if(cY + 1 < max){
+                            maze.get(cY + 1).get(cX).hasDot = false;
+                        }
+                        break;
+                    case KeyEvent.VK_LEFT:
+                        facing = 5;
+                        if(cX - 1 >= 0){
+                            maze.get(cY).get(cX - 1).hasDot = false;
+                        }
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        facing = 5;
+                        if(cX + 1 < max){
+                            maze.get(cY).get(cX + 1).hasDot = false;
+                        }
+                        break;
+                }
+            }
         }
     }
     
@@ -334,19 +457,25 @@ class InputPanel extends JPanel implements KeyListener{
     @Override
     public void keyTyped(KeyEvent e) {
     }
+    
     @Override
     public void keyPressed(KeyEvent e) {
         handleInput(e, true);
-        
     }
     @Override
     public void keyReleased(KeyEvent e) {
         handleInput(e, false);
     }
+    
     @Override
     public void paintComponent(Graphics g){
         g.setColor(Color.WHITE);
         doPaint(g);
+    }
+    
+    public InputPanel(){
+        super();
+        addKeyListener(this);
     }
 }
 
