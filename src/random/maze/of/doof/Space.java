@@ -3,6 +3,7 @@ package random.maze.of.doof;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import static random.maze.of.doof.RandomMazeOfDoof.moveEnem;
 
 public class Space {
     
@@ -16,8 +17,11 @@ public class Space {
     public int x = 0;
     public int y = 0;
     
+    public int timer = 0;
+    
     public boolean hasDot = false;
     public boolean visited = false;
+    public boolean isBad = false;
     public boolean isCurrent = false;
     public boolean[] walls =
     {
@@ -98,6 +102,32 @@ public class Space {
         }
         return temp;
     }
+    
+    public int state = 0;
+    
+    public void runLogic(){
+        if(isBad){
+            if(state == 0){
+                if(timer < 1000){
+                    timer++;
+                }
+                else{
+                    timer = 0;
+                    state = 1;
+                }
+            }
+            else if(state == 1){
+                if(timer < 100){
+                    timer++;
+                }
+                else{
+                    timer = 0;
+                    state = 0;
+                    moveEnem(x,y);
+                }
+            }
+        }
+    }
 
     public void draw(Graphics g){
         Graphics2D g2 = (Graphics2D) g;
@@ -106,6 +136,9 @@ public class Space {
         int ya = y * VA;
         int xb = xa + VA;
         int yb = ya + VA;
+        
+        g.setColor(Color.WHITE);
+        g2.fillRect(xa, ya, VA, VA);
         
         if(visited){
             g.setColor(Color.WHITE);
@@ -119,8 +152,19 @@ public class Space {
         if(isCurrent){
             g.setColor(Color.GREEN);
         }
-        
         g2.fillRect(xa, ya, VA, VA);
+        
+        if(isBad){
+            g.setColor(Color.MAGENTA);
+            int off1 = 0;
+            int off2 = 0;
+            if(state == 1){
+                off1 = (int)(Math.random() * 4 - 2);
+                off2 = (int)(Math.random() * 4 - 2);
+            }
+            g2.fillRect(xa + 3 + off1, ya + 3 + off2, VA - 6, VA - 6);
+        }
+        
         g.setColor(Color.BLACK);
         
         if(walls[UP]){
