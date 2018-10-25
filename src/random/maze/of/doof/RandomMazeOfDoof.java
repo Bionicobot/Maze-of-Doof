@@ -80,11 +80,20 @@ public class RandomMazeOfDoof {
     static class mazeTask extends TimerTask {
         @Override
         public void run() {
-            for(int i = 0; i < RUNS; i++){
-                if(!checkDirect()){
-                    timer2.cancel();
-                    mazeDone = true;
-                    p("Done");
+            if(!mazeDone){
+                for(int i = 0; i < RUNS; i++){
+                    if(!checkDirect()){
+                        mazeDone = true;
+                        genEn();
+                        p("Done");
+                    }
+                }
+            }
+            else{
+                for(int i = 0; i < max; i++){
+                    for(int r = 0; r < max; r++){
+                        maze.get(i).get(r).runLogic();
+                    }
                 }
             }
         }
@@ -207,6 +216,38 @@ public class RandomMazeOfDoof {
         timer2.schedule(new mazeTask(), 1, MILL);
     }
     
+    public static void genEn(){
+        for(int i = 0; i < max / 2; i++){
+            maze.get((int)(Math.random() * max)).get((int)(Math.random() * max)).isBad = true;
+        }
+    }
+    
+    public static void kill(){
+                        switch(facing){
+                        
+                        case UP:
+                            if(cY - 1 >= 0 && !maze.get(cY).get(cX).walls[UP] && maze.get(cY - 1).get(cX).isBad){
+                                maze.get(cY - 1).get(cX).isBad = false;
+                            }
+                            break;
+                        case DOWN:
+                            if(cY + 1 < max && !maze.get(cY).get(cX).walls[DOWN] && maze.get(cY + 1).get(cX).isBad){
+                                maze.get(cY + 1).get(cX).isBad = false;
+                            }
+                            break;
+                        case LEFT:
+                            if(cX - 1 >= 0 && !maze.get(cY).get(cX).walls[LEFT] && maze.get(cY).get(cX - 1).isBad){
+                                maze.get(cY).get(cX - 1).isBad = false;
+                            }
+                            break;
+                        case RIGHT:
+                            if(cX + 1 < max && !maze.get(cY).get(cX).walls[RIGHT] && maze.get(cY).get(cX + 1).isBad){
+                                maze.get(cY).get(cX + 1).isBad = false;
+                            }
+                            break;
+                        }
+    }
+    
     public static void setWall(int dir){
         maze.get(cY).get(cX).walls[dir] = false;
     }
@@ -225,6 +266,39 @@ public class RandomMazeOfDoof {
     }
     public static void notCur(){
         maze.get(cY).get(cX).isCurrent = false;
+    }
+    
+    public static void moveEnem(int x, int y){
+        boolean done = false;
+        while(!done){
+                    int dir = (int)(Math.random() * 4);
+                    switch(dir){
+                        case UP:
+                            if(!maze.get(y).get(x).walls[UP] && y - 1 > -1){
+                                maze.get(y).get(x).isBad = false;
+                                maze.get(y - 1).get(x).isBad = true;
+                                done = true;
+                            }
+                        case DOWN:
+                            if(!maze.get(y).get(x).walls[DOWN] && y + 1 < max){
+                                maze.get(y).get(x).isBad = false;
+                                maze.get(y + 1).get(x).isBad = true;
+                                done = true;
+                            }
+                        case LEFT:
+                            if(!maze.get(y).get(x).walls[LEFT] && x - 1 > -1){
+                                maze.get(y).get(x).isBad = false;
+                                maze.get(y).get(x - 1).isBad = true;
+                                done = true;
+                            }
+                        case RIGHT:
+                            if(!maze.get(y).get(x).walls[RIGHT] && x + 1 < max){
+                                maze.get(y).get(x).isBad = false;
+                                maze.get(y).get(x + 1).isBad = true;
+                                done = true;
+                            }
+                    }
+        }
     }
     
     public static boolean checkDirect(){
@@ -338,6 +412,21 @@ public class RandomMazeOfDoof {
     public static boolean shiftHeld = false;
     public static boolean[] heldDir = {false, false, false, false};
     
+    public static void setAllNoDot(){
+        if(cY - 1 >= 0){
+            maze.get(cY - 1).get(cX).hasDot = false;
+        }
+        if(cY + 1 < max){
+            maze.get(cY + 1).get(cX).hasDot = false;
+        }
+        if(cX - 1 >= 0){
+            maze.get(cY).get(cX - 1).hasDot = false;
+        }
+        if(cX + 1 < max){
+            maze.get(cY).get(cX + 1).hasDot = false;
+        }
+    }
+    
     public static void handleInput(KeyEvent e, boolean pressed) throws InterruptedException{
         if(mazeDone){
             if(pressed){
@@ -348,32 +437,29 @@ public class RandomMazeOfDoof {
                     
                     case KeyEvent.VK_SHIFT:
                         shiftHeld = true;
+                        setAllNoDot();
                         switch(facing){
                         
-                    case UP:
-                        //facing = 5;
-                        if(cY - 1 >= 0 && !maze.get(cY).get(cX).walls[UP]){
-                            maze.get(cY - 1).get(cX).hasDot = true;
-                        }
-                        break;
-                    case DOWN:
-                        //facing = 5;
-                        if(cY + 1 < max && !maze.get(cY).get(cX).walls[DOWN]){
-                            maze.get(cY + 1).get(cX).hasDot = true;
-                        }
-                        break;
-                    case LEFT:
-                        //facing = 5;
-                        if(cX - 1 >= 0 && !maze.get(cY).get(cX).walls[LEFT]){
-                            maze.get(cY).get(cX - 1).hasDot = true;
-                        }
-                        break;
-                    case RIGHT:
-                        //facing = 5;
-                        if(cX + 1 < max && !maze.get(cY).get(cX).walls[RIGHT]){
-                            maze.get(cY).get(cX + 1).hasDot = true;
-                        }
-                        break;
+                        case UP:
+                            if(cY - 1 >= 0 && !maze.get(cY).get(cX).walls[UP]){
+                                maze.get(cY - 1).get(cX).hasDot = true;
+                            }
+                            break;
+                        case DOWN:
+                            if(cY + 1 < max && !maze.get(cY).get(cX).walls[DOWN]){
+                                maze.get(cY + 1).get(cX).hasDot = true;
+                            }
+                            break;
+                        case LEFT:
+                            if(cX - 1 >= 0 && !maze.get(cY).get(cX).walls[LEFT]){
+                                maze.get(cY).get(cX - 1).hasDot = true;
+                            }
+                            break;
+                        case RIGHT:
+                            if(cX + 1 < max && !maze.get(cY).get(cX).walls[RIGHT]){
+                                maze.get(cY).get(cX + 1).hasDot = true;
+                            }
+                            break;
                         }
                         break;
                         
@@ -386,6 +472,7 @@ public class RandomMazeOfDoof {
                             setCur();
                         }
                         else if(shiftHeld && cY - 1 >= 0 && !maze.get(cY).get(cX).walls[UP]){
+                            setAllNoDot();
                             maze.get(cY - 1).get(cX).hasDot = true;
                             heldDir[UP] = true;
                         }
@@ -399,6 +486,7 @@ public class RandomMazeOfDoof {
                             setCur();
                         }
                         else if(shiftHeld && cY + 1 >= 0 && !maze.get(cY).get(cX).walls[DOWN]){
+                            setAllNoDot();
                             maze.get(cY + 1).get(cX).hasDot = true;
                             heldDir[DOWN] = true;
                         }
@@ -412,6 +500,7 @@ public class RandomMazeOfDoof {
                             setCur();
                         }
                         else if(shiftHeld && cX - 1 >= 0 && !maze.get(cY).get(cX).walls[LEFT]){
+                            setAllNoDot();
                             maze.get(cY).get(cX - 1).hasDot = true;
                             heldDir[LEFT] = true;
                         }
@@ -425,6 +514,7 @@ public class RandomMazeOfDoof {
                             setCur();
                         }
                         else if(shiftHeld && cX + 1 >= 0 && !maze.get(cY).get(cX).walls[RIGHT]){
+                            setAllNoDot();
                             maze.get(cY).get(cX + 1).hasDot = true;
                             heldDir[RIGHT] = true;
                         }
@@ -435,33 +525,8 @@ public class RandomMazeOfDoof {
                 switch(e.getKeyCode()){
                     case KeyEvent.VK_SHIFT:
                         shiftHeld = false;
-                        switch(facing){
-                        
-                    case UP:
-                        //facing = 5;
-                        if(cY - 1 >= 0){
-                            maze.get(cY - 1).get(cX).hasDot = false;
-                        }
-                        break;
-                    case DOWN:
-                        //facing = 5;
-                        if(cY + 1 < max){
-                            maze.get(cY + 1).get(cX).hasDot = false;
-                        }
-                        break;
-                    case LEFT:
-                        //facing = 5;
-                        if(cX - 1 >= 0){
-                            maze.get(cY).get(cX - 1).hasDot = false;
-                        }
-                        break;
-                    case RIGHT:
-                        //facing = 5;
-                        if(cX + 1 < max){
-                            maze.get(cY).get(cX + 1).hasDot = false;
-                        }
-                        break;
-                        }
+                        kill();
+                        setAllNoDot();
                         break;
                         
                     case KeyEvent.VK_UP:
