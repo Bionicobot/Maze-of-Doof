@@ -2,19 +2,16 @@ package random.maze.of.doof;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-//import java.awt.event.ActionEvent;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-//import java.text.NumberFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-//import javax.swing.text.NumberFormatter;
 import static random.maze.of.doof.RandomMazeOfDoof.doPaint;
 import static random.maze.of.doof.RandomMazeOfDoof.handleInput;
 
