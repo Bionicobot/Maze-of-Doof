@@ -17,11 +17,14 @@ public class Space {
     public int x = 0;
     public int y = 0;
     
+    public static int timerSpeed = 250;
+    
     public int timer = 0;
     
     public boolean hasDot = false;
     public boolean visited = false;
     public boolean isBad = false;
+    public boolean didJustMove = false;
     public boolean isCurrent = false;
     public boolean[] walls =
     {
@@ -108,7 +111,8 @@ public class Space {
     public void runLogic(){
         if(isBad){
             if(state == 0){
-                if(timer < 1000){
+                didJustMove = false;
+                if(timer < timerSpeed + 1){
                     timer++;
                 }
                 else{
@@ -117,7 +121,7 @@ public class Space {
                 }
             }
             else if(state == 1){
-                if(timer < 100){
+                if(timer < timerSpeed / 5 + 1){
                     timer++;
                 }
                 else{
