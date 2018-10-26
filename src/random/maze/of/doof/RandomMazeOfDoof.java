@@ -153,36 +153,11 @@ public class RandomMazeOfDoof {
         draw.setFocusable(true);
         draw.requestFocusInWindow();
         
-        /*scrollPane = new JScrollPane(draw);
-        
-        NumberFormat format = NumberFormat.getInstance();
-        NumberFormatter formatter = new NumberFormatter(format);
-        formatter.setValueClass(Integer.class);
-        formatter.setMinimum(0);
-        formatter.setMaximum(Integer.MAX_VALUE);
-        formatter.setAllowsInvalid(false);
-        formatter.setCommitsOnValidEdit(true);
-        
-        JFormattedTextField tf = new JFormattedTextField(formatter);
-        tf.setBounds(50,50, 150,20);
-        
-        JButton b = new JButton("Gen Maze");
-        b.setBounds(50,100,95,30);
-        b.addActionListener((ActionEvent e) -> {
-            try {
-                genMaze(Integer.parseInt(tf.getText().replace(",", "")));
-            } catch (InterruptedException ex) {
-                Logger.getLogger(RandomMazeOfDoof.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });*/
-        
         f.setPreferredSize(new Dimension(max * Space.VA, max * Space.VA));
         f.setSize(new Dimension(max * Space.VA, max * Space.VA));
         
         f.setLayout(new BorderLayout());
-        //f.add(tf, BorderLayout.NORTH);
         f.add(draw, BorderLayout.CENTER);
-        //f.add(b, BorderLayout.PAGE_END);
         
         f.setVisible(true);
         
@@ -207,7 +182,6 @@ public class RandomMazeOfDoof {
         draw.setPreferredSize(new Dimension(max * Space.VA, max * Space.VA));
         f.setPreferredSize(new Dimension(max * Space.VA + f.getInsets().left + f.getInsets().right + 1, max * Space.VA + f.getInsets().top + f.getInsets().bottom + 1 + 32));
         f.setSize(new Dimension(max * Space.VA + f.getInsets().left + f.getInsets().right + 1, max * Space.VA + f.getInsets().top + f.getInsets().bottom + 1 + 32));
-        //scrollPane.setViewportView(draw);
         
         maze = new ArrayList<>();
         for(int a = 0; a < size; a++){
