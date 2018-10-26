@@ -90,9 +90,24 @@ public class RandomMazeOfDoof {
                 }
             }
             else{
+                int cnt = 0;
                 for(int i = 0; i < max; i++){
                     for(int r = 0; r < max; r++){
-                        maze.get(i).get(r).runLogic();
+                        if(maze.get(i).get(r).isBad){
+                            maze.get(i).get(r).runLogic();
+                            cnt++;
+                        }
+                    }
+                }
+                if(cnt <= 0){
+                    timer2.cancel();
+                    if(Space.timerSpeed - 10 >= 0){
+                        Space.timerSpeed -= 10;
+                    }
+                    try {
+                        genMaze(max + 1);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(RandomMazeOfDoof.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -217,8 +232,15 @@ public class RandomMazeOfDoof {
     }
     
     public static void genEn(){
-        for(int i = 0; i < max / 2; i++){
-            maze.get((int)(Math.random() * max)).get((int)(Math.random() * max)).isBad = true;
+        for(int i = 0; i < max - 5; i++){
+            int aa = (int)(Math.random() * max);
+            int bb = (int)(Math.random() * max);
+            if(!maze.get(aa).get(bb).isBad && (cY != aa  && cX != bb)){
+                maze.get(aa).get(bb).isBad = true;
+            }
+            else{
+                i--;
+            }
         }
     }
     
@@ -228,21 +250,25 @@ public class RandomMazeOfDoof {
                         case UP:
                             if(cY - 1 >= 0 && !maze.get(cY).get(cX).walls[UP] && maze.get(cY - 1).get(cX).isBad){
                                 maze.get(cY - 1).get(cX).isBad = false;
+                                maze.get(cY - 1).get(cX).didJustMove = false;
                             }
                             break;
                         case DOWN:
                             if(cY + 1 < max && !maze.get(cY).get(cX).walls[DOWN] && maze.get(cY + 1).get(cX).isBad){
                                 maze.get(cY + 1).get(cX).isBad = false;
+                                maze.get(cY + 1).get(cX).didJustMove = false;
                             }
                             break;
                         case LEFT:
                             if(cX - 1 >= 0 && !maze.get(cY).get(cX).walls[LEFT] && maze.get(cY).get(cX - 1).isBad){
                                 maze.get(cY).get(cX - 1).isBad = false;
+                                maze.get(cY).get(cX - 1).didJustMove = false;
                             }
                             break;
                         case RIGHT:
                             if(cX + 1 < max && !maze.get(cY).get(cX).walls[RIGHT] && maze.get(cY).get(cX + 1).isBad){
                                 maze.get(cY).get(cX + 1).isBad = false;
+                                maze.get(cY).get(cX + 1).didJustMove = false;
                             }
                             break;
                         }
@@ -274,29 +300,37 @@ public class RandomMazeOfDoof {
                     int dir = (int)(Math.random() * 4);
                     switch(dir){
                         case UP:
-                            if(!maze.get(y).get(x).walls[UP] && y - 1 > -1){
+                            if(!maze.get(y).get(x).walls[UP] && y - 1 > -1 && !maze.get(y - 1).get(x).didJustMove){
                                 maze.get(y).get(x).isBad = false;
                                 maze.get(y - 1).get(x).isBad = true;
+                                maze.get(y - 1).get(x).didJustMove = true;
                                 done = true;
                             }
+                            break;
                         case DOWN:
-                            if(!maze.get(y).get(x).walls[DOWN] && y + 1 < max){
+                            if(!maze.get(y).get(x).walls[DOWN] && y + 1 < max && !maze.get(y + 1).get(x).didJustMove){
                                 maze.get(y).get(x).isBad = false;
                                 maze.get(y + 1).get(x).isBad = true;
+                                maze.get(y + 1).get(x).didJustMove = true;
                                 done = true;
                             }
+                            break;
                         case LEFT:
-                            if(!maze.get(y).get(x).walls[LEFT] && x - 1 > -1){
+                            if(!maze.get(y).get(x).walls[LEFT] && x - 1 > -1 && !maze.get(y).get(x - 1).didJustMove){
                                 maze.get(y).get(x).isBad = false;
                                 maze.get(y).get(x - 1).isBad = true;
+                                maze.get(y).get(x - 1).didJustMove = true;
                                 done = true;
                             }
+                            break;
                         case RIGHT:
-                            if(!maze.get(y).get(x).walls[RIGHT] && x + 1 < max){
+                            if(!maze.get(y).get(x).walls[RIGHT] && x + 1 < max && !maze.get(y).get(x + 1).didJustMove){
                                 maze.get(y).get(x).isBad = false;
                                 maze.get(y).get(x + 1).isBad = true;
+                                maze.get(y).get(x + 1).didJustMove = true;
                                 done = true;
                             }
+                            break;
                     }
         }
     }
