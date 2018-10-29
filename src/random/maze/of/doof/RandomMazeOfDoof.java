@@ -72,6 +72,7 @@ public class RandomMazeOfDoof {
         g2.drawImage(im, 0,32, null);
         g.setColor(Color.BLACK);
         g2.drawString("Health : " + health, 5,10);
+        g2.drawString("Level : " + (max - 9), 5, 25);
     }
     
     static class RemindTask extends TimerTask {
