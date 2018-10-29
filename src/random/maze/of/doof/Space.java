@@ -3,7 +3,9 @@ package random.maze.of.doof;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import static random.maze.of.doof.RandomMazeOfDoof.health;
 import static random.maze.of.doof.RandomMazeOfDoof.moveEnem;
+import static random.maze.of.doof.RandomMazeOfDoof.inviTim;
 
 public class Space {
     
@@ -130,6 +132,10 @@ public class Space {
                     moveEnem(x,y);
                 }
             }
+            if(isCurrent && inviTim == 0){
+                health--;
+                inviTim = 100;
+            }
         }
     }
 
@@ -154,7 +160,12 @@ public class Space {
             g.setColor(Color.RED);
         }
         if(isCurrent){
-            g.setColor(Color.GREEN);
+            if(inviTim % 2 == 0){
+                g.setColor(Color.GREEN);
+            }
+            else{
+                g.setColor(Color.DARK_GRAY);
+            }
         }
         g2.fillRect(xa, ya, VA, VA);
         
