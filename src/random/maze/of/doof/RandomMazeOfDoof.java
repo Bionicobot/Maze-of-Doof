@@ -21,6 +21,10 @@ public class RandomMazeOfDoof {
     static final int DOWN = 1;
     static final int LEFT = 2;
     static final int RIGHT = 3;
+    
+    public static int inviTim = 0;
+    public static int resetTime = 0;
+    public static int health = 3;
 
     public static int max = 0;
     public static int cX;
@@ -87,6 +91,9 @@ public class RandomMazeOfDoof {
                 }
             }
             else{
+                if(inviTim > 0 && resetTime == 0){
+                    inviTim--;
+                }
                 int cnt = 0;
                 for(int i = 0; i < max; i++){
                     for(int r = 0; r < max; r++){
@@ -96,13 +103,26 @@ public class RandomMazeOfDoof {
                         }
                     }
                 }
-                if(cnt <= 0){
+                if(cnt <= 0 && resetTime == 0){
+                    inviTim = 0;
                     timer2.cancel();
                     if(Space.timerSpeed - 10 >= 0){
                         Space.timerSpeed -= 10;
                     }
                     try {
                         genMaze(max + 1);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(RandomMazeOfDoof.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                if(health <= 0 && resetTime == 0){
+                    inviTim = 0;
+                    health = 3;
+                    timer2.cancel();
+                    Space.timerSpeed = 250;
+                    max = 10;
+                    try {
+                        genMaze(max);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(RandomMazeOfDoof.class.getName()).log(Level.SEVERE, null, ex);
                     }
