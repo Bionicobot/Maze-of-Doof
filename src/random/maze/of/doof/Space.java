@@ -114,7 +114,7 @@ public class Space {
         if(isBad){
             if(state == 0){
                 didJustMove = false;
-                if(timer < timerSpeed + 1){
+                if(timer + 1 < timerSpeed){
                     timer++;
                 }
                 else{
@@ -123,7 +123,7 @@ public class Space {
                 }
             }
             else if(state == 1){
-                if(timer < timerSpeed / 5 + 1){
+                if(timer + 1 < timerSpeed / 5){
                     timer++;
                 }
                 else{
