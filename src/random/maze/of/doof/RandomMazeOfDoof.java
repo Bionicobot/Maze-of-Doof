@@ -50,7 +50,7 @@ public class RandomMazeOfDoof {
     public static boolean runLoop = true;
     
     public static int RUNS = 1;
-    public static int MILL = 1;
+    public static int MILL = 10;
     
     public static boolean startedBefore = false;
     public static boolean mazeDone = false;
@@ -70,6 +70,8 @@ public class RandomMazeOfDoof {
             });
         }
         g2.drawImage(im, 0,32, null);
+        g.setColor(Color.BLACK);
+        g2.drawString("Health : " + health, 5,10);
     }
     
     static class RemindTask extends TimerTask {
