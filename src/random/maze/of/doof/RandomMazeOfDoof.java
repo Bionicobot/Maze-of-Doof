@@ -194,7 +194,7 @@ public class RandomMazeOfDoof {
     public static void p(Object b){System.out.println(b);}
     
     public static void main(String[] args) throws InterruptedException {
-        f = new JFrame("The Random Maze of Doof");
+        f = new JFrame("Carpal Tunnel");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         draw = new InputPanel();
