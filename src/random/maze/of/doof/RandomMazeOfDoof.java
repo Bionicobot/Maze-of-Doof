@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -22,9 +23,15 @@ public class RandomMazeOfDoof {
     static final int LEFT = 2;
     static final int RIGHT = 3;
     
+    static final int INIT_TIME = 30;
+    
     public static int inviTim = 0;
     public static int resetTime = 0;
     public static int health = 3;
+    public static long start = System.nanoTime();
+    public static long stop = System.nanoTime();
+    public static int maxTime = INIT_TIME;
+    public static double currentTimer = INIT_TIME;
 
     public static int max = 0;
     public static int cX;
@@ -55,6 +62,12 @@ public class RandomMazeOfDoof {
     public static boolean startedBefore = false;
     public static boolean mazeDone = false;
     
+    public static int score = 0;
+    
+    
+    public static long elapsed(){
+        return ( stop - start );}
+    
     public static void doPaint(Graphics g){
         g.setColor(Color.WHITE);
         g.clearRect(0,0, draw.getWidth(),draw.getHeight());
@@ -73,12 +86,19 @@ public class RandomMazeOfDoof {
         g.setColor(Color.BLACK);
         g2.drawString("Health : " + health, 5,10);
         g2.drawString("Level : " + (max - 9), 5, 25);
+        g2.drawString("Time : " + (int)(Math.floor(currentTimer)), 75,10);
+        g2.drawString("Score : " + score, 75,25);
     }
     
     static class RemindTask extends TimerTask {
         @Override
         public void run() {
+            start = System.nanoTime();
             draw.repaint();
+            if(currentTimer > 0 && mazeDone){
+                currentTimer += ((double)elapsed() / 1000000000.0);
+            }
+            stop = System.nanoTime();
         }
     }
     static class mazeTask extends TimerTask {
@@ -107,22 +127,31 @@ public class RandomMazeOfDoof {
                     }
                 }
                 if(cnt <= 0 && resetTime == 0){
+                    mazeDone = false;
                     inviTim = 0;
+                    score += (int)(Math.floor(currentTimer));
                     timer2.cancel();
                     if(Space.timerSpeed - 10 >= 0){
                         Space.timerSpeed -= 10;
                     }
+                    maxTime += 5;
+                    currentTimer = maxTime;
                     try {
                         genMaze(max + 1);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(RandomMazeOfDoof.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                if(health <= 0 && resetTime == 0){
+                if(health <= 0 || currentTimer <= 0){
+                    mazeDone = false;
                     inviTim = 0;
                     health = 3;
+                    score = 0;
+                    
                     timer2.cancel();
                     Space.timerSpeed = 250;
+                    maxTime = INIT_TIME;
+                    currentTimer = INIT_TIME;
                     max = 10;
                     try {
                         genMaze(max);
@@ -245,24 +274,28 @@ public class RandomMazeOfDoof {
                             if(cY - 1 >= 0 && !maze.get(cY).get(cX).walls[UP] && maze.get(cY - 1).get(cX).isBad){
                                 maze.get(cY - 1).get(cX).isBad = false;
                                 maze.get(cY - 1).get(cX).didJustMove = false;
+                                score += 1;
                             }
                             break;
                         case DOWN:
                             if(cY + 1 < max && !maze.get(cY).get(cX).walls[DOWN] && maze.get(cY + 1).get(cX).isBad){
                                 maze.get(cY + 1).get(cX).isBad = false;
                                 maze.get(cY + 1).get(cX).didJustMove = false;
+                                score += 1;
                             }
                             break;
                         case LEFT:
                             if(cX - 1 >= 0 && !maze.get(cY).get(cX).walls[LEFT] && maze.get(cY).get(cX - 1).isBad){
                                 maze.get(cY).get(cX - 1).isBad = false;
                                 maze.get(cY).get(cX - 1).didJustMove = false;
+                                score += 1;
                             }
                             break;
                         case RIGHT:
                             if(cX + 1 < max && !maze.get(cY).get(cX).walls[RIGHT] && maze.get(cY).get(cX + 1).isBad){
                                 maze.get(cY).get(cX + 1).isBad = false;
                                 maze.get(cY).get(cX + 1).didJustMove = false;
+                                score += 1;
                             }
                             break;
                         }
