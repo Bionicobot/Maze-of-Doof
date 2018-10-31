@@ -70,6 +70,10 @@ public class Space {
                 inviTim = 100;
             }
         }
+        if(isHealth){
+            health++;
+            isHealth = false;
+        }
     }
 
     public void draw(Graphics g){
@@ -111,6 +115,10 @@ public class Space {
                 off2 = (int)(Math.random() * 4 - 2);
             }
             g2.fillRect(xa + 3 + off1, ya + 3 + off2, VA - 6, VA - 6);
+        }
+        else if(isHealth){
+            g.setColor(Color.CYAN);
+            g2.fillRect(xa + 3, ya + 3, VA - 6, VA - 6);
         }
         
         g.setColor(Color.BLACK);
