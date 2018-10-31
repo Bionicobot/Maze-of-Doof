@@ -56,6 +56,8 @@ public class RandomMazeOfDoof {
     
     public static boolean runLoop = true;
     
+    public static boolean deadState = false;
+    
     public static int RUNS = 1;
     public static int MILL = 10;
     
@@ -88,17 +90,29 @@ public class RandomMazeOfDoof {
         g2.drawString("Level : " + (max - 9), 5, 25);
         g2.drawString("Time : " + (int)(Math.floor(currentTimer)), 75,10);
         g2.drawString("Score : " + score, 75,25);
+        if(deadState){
+            g.setColor(Color.BLACK);
+            g2.fillRect(0,0, max * Space.VA + 1, max * Space.VA + 1 + 32);
+            g.setColor(Color.WHITE);
+            g2.drawString("You have recieved die.", 5,15);
+            g2.drawString("You got a score of " + score, 5, 30);
+            g2.drawString("Press R to become not die.", 5,45);
+        }
     }
     
     static class RemindTask extends TimerTask {
         @Override
         public void run() {
-            start = System.nanoTime();
-            draw.repaint();
-            if(currentTimer > 0 && mazeDone){
-                currentTimer += ((double)elapsed() / 1000000000.0);
+            if(!deadState){
+                start = System.nanoTime();
             }
-            stop = System.nanoTime();
+            draw.repaint();
+            if(!deadState){
+                if(currentTimer > 0 && mazeDone){
+                    currentTimer += ((double)elapsed() / 1000000000.0);
+                }
+                stop = System.nanoTime();
+            }
         }
     }
     static class mazeTask extends TimerTask {
@@ -113,7 +127,7 @@ public class RandomMazeOfDoof {
                     }
                 }
             }
-            else{
+            else if(!deadState){
                 if(inviTim > 0 && resetTime == 0){
                     inviTim--;
                 }
@@ -143,54 +157,13 @@ public class RandomMazeOfDoof {
                     }
                 }
                 if(health <= 0 || currentTimer <= 0){
-                    mazeDone = false;
-                    inviTim = 0;
-                    health = 3;
-                    score = 0;
-                    
+                    deadState = true;
                     timer2.cancel();
-                    Space.timerSpeed = 250;
-                    maxTime = INIT_TIME;
-                    currentTimer = INIT_TIME;
-                    max = 10;
-                    try {
-                        genMaze(max);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(RandomMazeOfDoof.class.getName()).log(Level.SEVERE, null, ex);
-                    }
                 }
             }
         }
     }
     
-    public static void printDebug(){
-        output = "";
-        maze.stream().map((line) -> {
-            line.forEach((space) -> {
-                output += space.pTop();
-            });
-            return line;
-        }).map((line) -> {
-            output += "\n";
-            return line;
-        }).map((line) -> {
-            line.forEach((space) -> {
-                output += space.pMid();
-            });
-            return line;
-        }).map((line) -> {
-            output += "\n";
-            return line;
-        }).map((line) -> {
-            line.forEach((space) -> {
-                output += space.pBot();
-            });
-            return line;
-        }).forEachOrdered((_item) -> {
-            output += "\n";
-        });
-                    System.out.println(output);
-    }
     public static void p(Object b){System.out.println(b);}
     
     public static void main(String[] args) throws InterruptedException {
@@ -493,6 +466,17 @@ public class RandomMazeOfDoof {
             if(pressed){
                 switch(e.getKeyCode()){
                     case KeyEvent.VK_R:
+                        mazeDone = false;
+                        inviTim = 0;
+                        health = 3;
+                        score = 0;
+                    
+                        timer2.cancel();
+                        Space.timerSpeed = 250;
+                        maxTime = INIT_TIME;
+                        currentTimer = INIT_TIME;
+                        max = 10;
+                        deadState = false;
                         genMaze(10);
                         break;
                     
