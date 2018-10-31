@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -169,6 +170,7 @@ public class RandomMazeOfDoof {
     public static void main(String[] args) throws InterruptedException {
         f = new JFrame("Carpal Tunnel");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width  - f.getSize().width) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - f.getSize().height) / 2);
         
         draw = new InputPanel();
         draw.setBounds(0,0,10000,10000);
@@ -207,6 +209,7 @@ public class RandomMazeOfDoof {
         draw.setPreferredSize(new Dimension(max * Space.VA, max * Space.VA));
         f.setPreferredSize(new Dimension(max * Space.VA + f.getInsets().left + f.getInsets().right + 1, max * Space.VA + f.getInsets().top + f.getInsets().bottom + 1 + 32));
         f.setSize(new Dimension(max * Space.VA + f.getInsets().left + f.getInsets().right + 1, max * Space.VA + f.getInsets().top + f.getInsets().bottom + 1 + 32));
+        f.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width  - f.getSize().width) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - f.getSize().height) / 2);
         
         maze = new ArrayList<>();
         for(int a = 0; a < size; a++){
