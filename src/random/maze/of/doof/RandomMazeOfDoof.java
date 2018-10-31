@@ -135,7 +135,7 @@ public class RandomMazeOfDoof {
                 int cnt = 0;
                 for(int i = 0; i < max; i++){
                     for(int r = 0; r < max; r++){
-                        if(maze.get(i).get(r).isBad){
+                        if(maze.get(i).get(r).isBad || maze.get(i).get(r).isHealth){
                             maze.get(i).get(r).runLogic();
                             cnt++;
                         }
@@ -240,13 +240,13 @@ public class RandomMazeOfDoof {
             else{
                 i--;
             }
-        }
-        if((int)(Math.random() * 10) == 1){
-            int aa = (int)(Math.random() * max);
-            int bb = (int)(Math.random() * max);
+        if((Math.random() * 10) < 5){
+            aa = (int)(Math.random() * max);
+            bb = (int)(Math.random() * max);
             if(!maze.get(aa).get(bb).isBad && (cY != aa  && cX != bb)){
                 maze.get(aa).get(bb).isHealth = true;
             }
+        }
         }
     }
     
