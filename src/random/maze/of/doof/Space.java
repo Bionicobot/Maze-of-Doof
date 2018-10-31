@@ -8,6 +8,7 @@ import static random.maze.of.doof.RandomMazeOfDoof.cY;
 import static random.maze.of.doof.RandomMazeOfDoof.health;
 import static random.maze.of.doof.RandomMazeOfDoof.moveEnem;
 import static random.maze.of.doof.RandomMazeOfDoof.inviTim;
+import static random.maze.of.doof.RandomMazeOfDoof.score;
 
 public class Space {
     
@@ -74,6 +75,7 @@ public class Space {
         }
         if(isHealth && x == cX && y == cY){
             health++;
+            score++;
             isHealth = false;
         }
     }
