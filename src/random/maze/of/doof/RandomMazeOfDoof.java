@@ -241,6 +241,13 @@ public class RandomMazeOfDoof {
                 i--;
             }
         }
+        if((int)(Math.random() * 10) == 1){
+            int aa = (int)(Math.random() * max);
+            int bb = (int)(Math.random() * max);
+            if(!maze.get(aa).get(bb).isBad && (cY != aa  && cX != bb)){
+                maze.get(aa).get(bb).isHealth = true;
+            }
+        }
     }
     
     public static void kill(){
