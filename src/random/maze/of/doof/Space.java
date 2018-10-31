@@ -3,6 +3,8 @@ package random.maze.of.doof;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import static random.maze.of.doof.RandomMazeOfDoof.cX;
+import static random.maze.of.doof.RandomMazeOfDoof.cY;
 import static random.maze.of.doof.RandomMazeOfDoof.health;
 import static random.maze.of.doof.RandomMazeOfDoof.moveEnem;
 import static random.maze.of.doof.RandomMazeOfDoof.inviTim;
@@ -70,7 +72,7 @@ public class Space {
                 inviTim = 100;
             }
         }
-        if(isHealth){
+        if(isHealth && x == cX && y == cY){
             health++;
             isHealth = false;
         }
