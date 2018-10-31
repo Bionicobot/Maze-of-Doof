@@ -26,8 +26,10 @@ public class Space {
     public boolean hasDot = false;
     public boolean visited = false;
     public boolean isBad = false;
+    public boolean isHealth = false;
     public boolean didJustMove = false;
     public boolean isCurrent = false;
+    public int state = 0;
     public boolean[] walls =
     {
         true, // UP
@@ -40,75 +42,6 @@ public class Space {
         x = xp;
         y = yp;
     }
-    
-    public String pTop(){
-        String temp = "";
-        if(walls[LEFT] || walls[UP]){
-            temp += "#";
-        }
-        else{
-            temp += " ";
-        }
-        if(walls[UP]){
-            temp += "#";
-        }
-        else{
-            temp += " ";
-        }
-        if(walls[RIGHT] || walls[UP]){
-            temp += "#";
-        }
-        else{
-            temp += " ";
-        }
-        return temp;
-    }
-    public String pMid(){
-        String temp = "";
-        if(walls[LEFT]){
-            temp += "#";
-        }
-        else{
-            temp += " ";
-        }
-        if(visited){
-            temp += " ";
-        }
-        else{
-            temp += "#";
-        }
-        if(walls[RIGHT]){
-            temp += "#";
-        }
-        else{
-            temp += " ";
-        }
-        return temp;
-    }
-    public String pBot(){
-        String temp = "";
-        if(walls[LEFT] || walls[DOWN]){
-            temp += "#";
-        }
-        else{
-            temp += " ";
-        }
-        if(walls[DOWN]){
-            temp += "#";
-        }
-        else{
-            temp += " ";
-        }
-        if(walls[RIGHT] || walls[DOWN]){
-            temp += "#";
-        }
-        else{
-            temp += " ";
-        }
-        return temp;
-    }
-    
-    public int state = 0;
     
     public void runLogic(){
         if(isBad){
