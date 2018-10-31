@@ -108,6 +108,9 @@ public class Space {
         
         if(isBad){
             g.setColor(Color.MAGENTA);
+            if(isHealth){
+                isHealth = false;
+            }
             int off1 = 0;
             int off2 = 0;
             if(state == 1){
