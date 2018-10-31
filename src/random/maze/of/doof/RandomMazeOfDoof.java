@@ -299,7 +299,8 @@ public class RandomMazeOfDoof {
     
     public static void moveEnem(int x, int y){
         boolean done = false;
-        while(!done){
+        boolean[] didMov = new boolean[4];
+        while(!done && (!didMov[UP] || !didMov[DOWN] || !didMov[RIGHT] || !didMov[LEFT])){
                     int dir = (int)(Math.random() * 4);
                     switch(dir){
                         case UP:
@@ -309,6 +310,7 @@ public class RandomMazeOfDoof {
                                 maze.get(y - 1).get(x).didJustMove = true;
                                 done = true;
                             }
+                            didMov[UP] = true;
                             break;
                         case DOWN:
                             if(!maze.get(y).get(x).walls[DOWN] && y + 1 < max && !maze.get(y + 1).get(x).didJustMove){
@@ -317,6 +319,7 @@ public class RandomMazeOfDoof {
                                 maze.get(y + 1).get(x).didJustMove = true;
                                 done = true;
                             }
+                            didMov[DOWN] = true;
                             break;
                         case LEFT:
                             if(!maze.get(y).get(x).walls[LEFT] && x - 1 > -1 && !maze.get(y).get(x - 1).didJustMove){
@@ -325,6 +328,7 @@ public class RandomMazeOfDoof {
                                 maze.get(y).get(x - 1).didJustMove = true;
                                 done = true;
                             }
+                            didMov[LEFT] = true;
                             break;
                         case RIGHT:
                             if(!maze.get(y).get(x).walls[RIGHT] && x + 1 < max && !maze.get(y).get(x + 1).didJustMove){
@@ -333,6 +337,7 @@ public class RandomMazeOfDoof {
                                 maze.get(y).get(x + 1).didJustMove = true;
                                 done = true;
                             }
+                            didMov[RIGHT] = true;
                             break;
                     }
         }
