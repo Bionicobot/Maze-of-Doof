@@ -240,13 +240,13 @@ public class RandomMazeOfDoof {
             else{
                 i--;
             }
-        if((Math.random() * 10) < 5){
-            aa = (int)(Math.random() * max);
-            bb = (int)(Math.random() * max);
+        }
+        if((Math.random() * 10) < 2){
+            int aa = (int)(Math.random() * max);
+            int bb = (int)(Math.random() * max);
             if(!maze.get(aa).get(bb).isBad && (cY != aa  && cX != bb)){
                 maze.get(aa).get(bb).isHealth = true;
             }
-        }
         }
     }
     
