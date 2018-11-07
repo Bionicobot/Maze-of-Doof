@@ -175,7 +175,7 @@ public class RandomMazeOfDoof {
         draw.setBackground(Color.BLACK);
         draw.setPreferredSize(new Dimension(100,100));
         
-        draw.setFocusable(true); //replace "draw" with "this"
+        draw.setFocusable(true);
         draw.requestFocusInWindow();
         
         f.setPreferredSize(new Dimension(max * Space.VA, max * Space.VA));
