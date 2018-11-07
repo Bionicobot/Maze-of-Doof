@@ -77,7 +77,9 @@ public class RandomMazeOfDoof {
         Graphics2D g2 = (Graphics2D) g;
         g2.fillRect(0,0, draw.getWidth(),draw.getHeight());
         im = new BufferedImage(max * Space.VA + 1, max * Space.VA + 1, BufferedImage.TYPE_INT_RGB);
+        BufferedImage im2 = new BufferedImage(max * Space.VA + 1, max * Space.VA + 1, BufferedImage.TYPE_INT_RGB);
         Graphics img = im.getGraphics();
+        Graphics img2 = im2.getGraphics();
         if(doDraw){
             maze.forEach((line) -> {
                 line.forEach((space) -> {
@@ -85,7 +87,9 @@ public class RandomMazeOfDoof {
                 });
             });
         }
-        g2.drawImage(im, 0,32, null);
+        //img2.drawImage(im, (int)(Math.random() * (max - 10)) -  (max - 10) / 2, (int)(Math.random() * (max - 10)) - (max - 10) / 2, null);
+        img2.drawImage(im, 0,0, null);
+        g2.drawImage(im2, 0,32, null);
         g.setColor(Color.BLACK);
         g2.drawString("Health : " + health, 5,10);
         g2.drawString("Level : " + (max - 9), 5, 25);
@@ -99,6 +103,7 @@ public class RandomMazeOfDoof {
             g2.drawString("You got a score of " + score, 5, 30);
             g2.drawString("Press R to become not die.", 5,45);
         }
+        f.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width  - f.getSize().width) / 2 + (int)(Math.random() * (max - 10)) -  (max - 10) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - f.getSize().height) / 2 + (int)(Math.random() * (max - 10)) -  (max - 10) / 2);
     }
     
     static class RemindTask extends TimerTask {
@@ -480,6 +485,22 @@ public class RandomMazeOfDoof {
         if(mazeDone){
             if(pressed){
                 switch(e.getKeyCode()){
+                    case KeyEvent.VK_E:
+                    mazeDone = false;
+                    inviTim = 0;
+                    score += (int)(Math.floor(currentTimer));
+                    timer2.cancel();
+                    if(Space.timerSpeed - 10 >= 0){
+                        Space.timerSpeed -= 10;
+                    }
+                    maxTime += 5;
+                    currentTimer = maxTime;
+                    try {
+                        genMaze(max + 1);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(RandomMazeOfDoof.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    break;
                     case KeyEvent.VK_R:
                         mazeDone = false;
                         inviTim = 0;
